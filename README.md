@@ -3,7 +3,7 @@
 <div align="center">
 
   <a href="https://www.bayyenatquran.com/">
-    <img alt="نرم افزار تهیه گزارش" style="width: 50%" src="gui.png"/>
+    <img alt="نرم افزار تهیه گزارش" style="width: 80%" src="gui.png"/>
   </a>
 
   <p>
