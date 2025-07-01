@@ -1,4 +1,7 @@
+import matplotlib
+matplotlib.use("Agg")
 from matplotlib import pyplot as plt
+
 from pathlib import Path
 import pandas as pd
 from docx import Document
@@ -18,10 +21,6 @@ class DataReplacer:
         self.data_file = False
 
     def get_days(self, days_dir):
-        '''
-        input: day file directory
-        output: 2 outputs one is boolean and the other is a message
-        '''
         try:
             self.days = pd.read_excel(days_dir)
             self.days_file = True
@@ -32,10 +31,6 @@ class DataReplacer:
             return False, msg
 
     def get_user_data(self, dir_data):
-        '''
-        input: data file directory
-        output: 2 outputs one is boolean and the other is a message
-        '''
         try:
             self.data = pd.read_excel(dir_data)
             self.data_file = True
@@ -47,10 +42,6 @@ class DataReplacer:
 
     @staticmethod
     def plotter(dict_data, valid_days):
-        '''
-        inputs: days and dictionary converted dataframe
-        outputs: plot a graph and calculate sum and average of students' marks
-        '''
         x = []
         y = []
         marks = []
@@ -79,12 +70,25 @@ class DataReplacer:
         plt.xticks(ticks=range(1, 30))       # Show all 1 to 31
         plt.yticks(ticks=range(0, 101, 10))  # Show every 10 from 0 to 100
 
+        # Add labels
+        # plt.xlabel('Day of Month')
+        # plt.ylabel('Value (%)')
+        # plt.title('روند قرآن آموز')
+
         fig_name = 'fig.png'
 
+        # Show grid and plot
         plt.grid(True)
         plt.tight_layout()
         plt.savefig(fig_name)
         # plt.show()
+        
+        # resize image
+        # image_path = fig_name  # Replace with your image path
+        # output_path = 'fig1.png'  # Replace with your desired output path
+        # new_width = 1030  # Replace with your desired width
+        # new_height = 300  # Replace with your desired height
+        # resize_image(image_path, output_path, new_width, new_height)
         
         # image path
         img_path = os.path.join(os.getcwd(), fig_name)
@@ -93,15 +97,13 @@ class DataReplacer:
     @staticmethod
     def accumulator(dict_data, dict_days, image, total, average):
         """
-        This function is responssible to create
-        a dictionary of all the data of a student.
-        image: an image path of the graph
+        image: an image path
         """
         data = {}
         data.update(dict_data)
         data.update(dict_days)
         data['image'] = image
-        data['total'] = total # sum of all marks
+        data['total'] = total
         data['average'] = average
 
         return data
@@ -149,10 +151,6 @@ class DataReplacer:
 
     @staticmethod
     def days_validator(days):
-        '''
-        This function drops null values
-        and returns valid data
-        '''
         valid_days = days.dropna(axis=1)
         valid_days = DataReplacer.df2dict(valid_days)[0]
         return valid_days
@@ -169,15 +167,26 @@ class DataReplacer:
         # print(valid_days)
         # # valid_days
 
-        for data in tqdm(dict_data):
-            yield True
+        for data in dict_data:
             # print('s')
             img, sum_score, average_score = DataReplacer.plotter(data, valid_days)
             total_data = DataReplacer.accumulator(data, valid_days, img, sum_score, average_score)
             DataReplacer.raplace_data(total_data, src=template_path)
+            yield True
         
         self.data_file, self.days_file = False, False
         try: 
             os.remove('fig.png')
         except:
             pass
+
+# dr = DataReplacer()
+
+# days = dr.get_days('days.xlsx')
+# print(f'days: {days}')
+
+# data = dr.get_user_data('input_data.xlsx')
+# print(f'data: {data}')
+
+# for x in dr.data_replace_main():
+#     print(x)
